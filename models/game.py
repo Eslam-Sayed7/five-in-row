@@ -1,5 +1,6 @@
 import random
 import pygame
+from controllers.minmax import minmax
 class GomokuGame:
     def __init__(self, board):
         self.board = board
@@ -95,8 +96,8 @@ class GomokuGame:
 
     def ai_move(self):
         valid_moves = self.get_valid_moves()
-        # return alpha_beta(self.board, valid_moves, ....) eg.
-        return random.choice(valid_moves)  # <----- replace with minmax or alpha beta when you done creating it
+        best_move = minmax(self.board, valid_moves, self.current_player)
+        return best_move  
     
     def run(self, events,board,width,height): # for the actual game
         if self.game_over:
