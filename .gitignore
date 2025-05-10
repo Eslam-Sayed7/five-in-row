@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / compiled Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+
+# Distribution / packaging
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Logs and debug files
+*.log
+*.tmp
+
+# IDE-specific files
+.vscode/
+.idea/
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Python cache files
+*.pyo
+*.pyd
+
+# PyWavefront cache
+*.obj.cache
+*.mtl.cache
