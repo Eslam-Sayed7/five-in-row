@@ -95,6 +95,7 @@ class GomokuGame:
 
     def ai_move(self):
         valid_moves = self.get_valid_moves()
+        # return alpha_beta(self.board, valid_moves, ....) eg.
         return random.choice(valid_moves)  # <----- replace with minmax or alpha beta when you done creating it
     
     def run(self, events,board,width,height): # for the actual game
