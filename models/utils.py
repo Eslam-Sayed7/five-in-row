@@ -7,6 +7,11 @@ def check_five_in_a_row(line):
 
 def check_game_status(board):
 
+	# 0  -> Draw
+	# 2  -> ● win
+	# -2 -> ○ win
+	# 1  -> Otherwise
+
     # Check rows and columns
     for i in range(15):
         row_result = check_five_in_a_row(board[i])

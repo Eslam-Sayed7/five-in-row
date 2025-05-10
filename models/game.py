@@ -1,6 +1,7 @@
 import random
 import pygame
 from controllers.minmax import minmax
+from models.utils import check_game_status
 class GomokuGame:
     def __init__(self, board):
         self.board = board
@@ -19,50 +20,28 @@ class GomokuGame:
             return False
 
         if self.board.place_stone(row, col, self.current_player):
-            if self.check_win(row, col):
+            if self.check_win():
                 self.winner = self.current_player
+                self.game_over = True
+            elif self.check_draw():
                 self.game_over = True
             else:
                 self.current_player = 2 if self.current_player == 1 else 1
             return True
         return False
 
-    def check_win(self, row, col):
-        directions = [
-            (-1, 0),  
-            (1, 0),   
-            (0, -1),  
-            (0, 1),   
-            (-1, -1), 
-            (-1, 1),  
-            (1, -1),  
-            (1, 1)    
-        ]
-        
-        for dr, dc in directions:
-            count = 1
-            
-            r, c = row + dr, col + dc
-            while 0 <= r < self.board.board_size and 0 <= c < self.board.board_size:
-                if self.board.board_state[r][c] == self.current_player:
-                    count += 1
-                    r, c = r + dr, c + dc
-                else:
-                    break
-
-            r, c = row - dr, col - dc
-            while 0 <= r < self.board.board_size and 0 <= c < self.board.board_size:
-                if self.board.board_state[r][c] == self.current_player:
-                    count += 1
-                    r, c = r - dr, c - dc
-                else:
-                    break
-            
-            if count >= 5:
-                return True
+    def check_win(self):
+        game_status = check_game_status(self.board.board_state)
+        if(game_status == 2 or game_status == -2):
+            return True
         
         return False
-
+    
+    def check_draw(self):
+        game_status = check_game_status(self.board.board_state)
+        if game_status == 0:
+            return True
+        return False
 
     def get_valid_moves(self):
         moves = []
@@ -132,7 +111,7 @@ class GomokuGame:
             self.valid_moves = self.get_valid_moves()
 
         if self.game_over:
-            print(f"Player {self.winner} wins!")
+            self.winner if print(f"Player {self.winner} wins!") else print("Draw!")  
 
     def run_debug(self):
         self.board.clear_board()
@@ -152,7 +131,7 @@ class GomokuGame:
                         print("Invalid move. Try again.")
                     elif self.game_over:
                         self.print_board()
-                        print(f"Player {self.winner} wins!")
+                        self.winner if print(f"Player {self.winner} wins!") else print("Draw!")    
                         break
                 except ValueError:
                     print("Invalid input! Please enter two integers separated by a space.")
@@ -164,5 +143,5 @@ class GomokuGame:
                     continue
                 elif self.game_over:
                     self.print_board()
-                    print(f"Player {self.winner} wins!")
+                    self.winner if print(f"Player {self.winner} wins!") else print("Draw!")  
                     break
