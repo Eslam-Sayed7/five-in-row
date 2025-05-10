@@ -10,8 +10,8 @@ class MenuState(GameState):
         self.menu_state = "Main"
         self.board_size = 15
         
-        font = pygame.font.Font('five-in-row/assets/SupremeSpike-KVO8D.otf', 24)
-        self.logo_font = pygame.font.Font('five-in-row/assets/Sanctum-GxmO.ttf', 32)
+        font = pygame.font.Font('assets/SupremeSpike-KVO8D.otf', 24)
+        self.logo_font = pygame.font.Font('assets/Sanctum-GxmO.ttf', 32)
         self.logo = pygame.Rect(50, 200, 200, 100)
         self.logo_color = (255, 255, 255)
         self.logo_surface = self.logo_font.render("GOMOKU GAME", True, self.logo_color)

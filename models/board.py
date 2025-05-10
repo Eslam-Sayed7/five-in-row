@@ -25,12 +25,12 @@ class GomokuBoard:
         self.board_state = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
         self._place_initial_stones()
         # === 2D settings 
-        self.background_image_raw = pygame.image.load("five-in-row/assets/textures/background.png")
+        self.background_image_raw = pygame.image.load("assets/textures/background.png")
 
-        self.cell_texture = pygame.image.load("five-in-row/assets/textures/2.jpg")
+        self.cell_texture = pygame.image.load("assets/textures/2.jpg")
         self.cell_texture = pygame.transform.scale(self.cell_texture, (self.cell_size, self.cell_size))
 
-        self.font = pygame.font.Font('five-in-row/assets/SupremeSpike-KVO8D.otf', 16)
+        self.font = pygame.font.Font('assets/SupremeSpike-KVO8D.otf', 16)
         self.buttons = [Button("[ESC] Main Menu - note to developers, the UI not done yet, its just working for now",(20,20),self.font,50,20,text_color=(0,0,0),hover_color=(0,0,0))]
 
     def clear_board(self):

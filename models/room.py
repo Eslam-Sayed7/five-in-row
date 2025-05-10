@@ -32,8 +32,8 @@ class RoomRenderer:
         self.current_target_z = 0
         self.models = {}
         try:
-            self.models['table'] = ObjLoader.load_obj(self.models,'five-in-row/assets/table.obj', name = 'table')
-            self.models['chair'] = ObjLoader.load_obj(self.models,'five-in-row/assets/chair.obj', name = 'chair')
+            self.models['table'] = ObjLoader.load_obj(self.models,'assets/table.obj', name = 'table')
+            self.models['chair'] = ObjLoader.load_obj(self.models,'assets/chair.obj', name = 'chair')
             if self.models['table'] is None or self.models['chair'] is None:
                 print("Model failed to load.")
         except Exception as e:
