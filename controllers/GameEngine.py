@@ -13,30 +13,35 @@ from models.game import GomokuGame
 from models.board import GomokuBoard
 
 class GameEngine:
-    def __init__(self, width=1280, height=720, fps=120):
+    def __init__(self, width=1280, height=720, fps=120, dramatic_mode = True):
         pygame.init()
         pygame.display.set_caption('Gomoku')
-        pygame.display.gl_set_attribute(GL_MULTISAMPLEBUFFERS, 1)
-        pygame.display.gl_set_attribute(GL_MULTISAMPLESAMPLES, 4)
 
-        self.gomoku_board = GomokuBoard()
-        self.room_renderer = RoomRenderer(self.gomoku_board)
         self.width = width
         self.height = height
         self.fps = fps
-        self.screen = pygame.display.set_mode((self.width, self.height), pygame.OPENGL | pygame.DOUBLEBUF | pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.running = True
         self.full_screen = False
-        self.dramatic_mode = False
-        self.game_logic = GomokuGame(self.gomoku_board)
-        self.menu_state = MenuState(self)
-        self.play_state = PlayState(self)
-        self.current_state = self.menu_state
+        self.dramatic_mode = dramatic_mode
 
-        self.resize(width, height)
-        glClearColor(0.1, 0.1, 0.1, 1.0) 
-        glEnable(GL_DEPTH_TEST)
+        self.gomoku_board = GomokuBoard()
+        self.game_logic = GomokuGame(self.gomoku_board)
+        if self.dramatic_mode:
+            print("3D mode")
+            pygame.display.gl_set_attribute(GL_MULTISAMPLEBUFFERS, 1)
+            pygame.display.gl_set_attribute(GL_MULTISAMPLESAMPLES, 4)
+            self.screen = pygame.display.set_mode((self.width, self.height), pygame.OPENGL | pygame.DOUBLEBUF | pygame.RESIZABLE)
+            glClearColor(0.1, 0.1, 0.1, 1.0)
+            glEnable(GL_DEPTH_TEST)
+            self.room_renderer = RoomRenderer(self.gomoku_board)
+
+            self.menu_state = MenuState(self)
+            self.play_state = PlayState(self)
+            self.current_state = self.menu_state
+            self.resize(width, height)
+
+
 
     def change_state(self, new_state):
         if self.current_state:
@@ -92,12 +97,10 @@ class GameEngine:
         self.current_state.handle_events(events)
 
     def run(self):
-        if (self.dramatic_mode):
+        if self.dramatic_mode:
             while self.running:
                 self.clock.tick(self.fps)
                 self.handle_events()
-                
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
                 self.current_state.render()
                 self.current_state.update(1)
                 pygame.display.flip()
