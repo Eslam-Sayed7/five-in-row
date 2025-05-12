@@ -1,6 +1,7 @@
 import random
 import pygame
 from controllers.minmax import minmax
+from controllers.alpha_beta import alpha_beta
 from models.utils import check_game_status
 class GomokuGame:
     def __init__(self, board):
@@ -75,8 +76,9 @@ class GomokuGame:
 
     def ai_move(self):
         valid_moves = self.get_valid_moves()
-        best_move = minmax(self.board, valid_moves, self.current_player)
-        return best_move  
+        best_move = alpha_beta(self.board, valid_moves, self.current_player)
+        # best_move = minmax(self.board, valid_moves, self.current_player)
+        return best_move
     
     def run(self, events,board,width,height): # for the actual game
         if self.game_over:
@@ -111,7 +113,10 @@ class GomokuGame:
             self.valid_moves = self.get_valid_moves()
 
         if self.game_over:
-            self.winner if print(f"Player {self.winner} wins!") else print("Draw!")  
+            if self.winner:
+                print(f"Player {self.winner} wins!")
+            else:
+                print("Draw!")
 
     def run_debug(self):
         self.board.clear_board()
@@ -131,7 +136,10 @@ class GomokuGame:
                         print("Invalid move. Try again.")
                     elif self.game_over:
                         self.print_board()
-                        self.winner if print(f"Player {self.winner} wins!") else print("Draw!")    
+                        if self.winner:
+                            print(f"Player {self.winner} wins!")
+                        else:
+                            print("Draw!")
                         break
                 except ValueError:
                     print("Invalid input! Please enter two integers separated by a space.")
@@ -143,5 +151,8 @@ class GomokuGame:
                     continue
                 elif self.game_over:
                     self.print_board()
-                    self.winner if print(f"Player {self.winner} wins!") else print("Draw!")  
+                    if self.winner:
+                        print(f"Player {self.winner} wins!")
+                    else:
+                        print("Draw!")
                     break

@@ -1,14 +1,6 @@
 import sys
-from models.utils import check_game_status
+from models.utils import check_game_status, calculate_best_depth
 
-def calculate_best_depth(valid_moves):
-    depth: int = 0
-    max_number_of_operations = 1e5
-    number_of_valid_moves = len(valid_moves)
-    while(number_of_valid_moves ** depth) < max_number_of_operations:
-        depth += 1
-    
-    return depth-1
 
 def get_best_move(board, depth, player, first_time=True):
     # Return a move (x, y): [0, 14]
