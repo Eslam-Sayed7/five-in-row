@@ -113,7 +113,10 @@ class GomokuGame:
             self.valid_moves = self.get_valid_moves()
 
         if self.game_over:
-            self.winner if print(f"Player {self.winner} wins!") else print("Draw!")  
+            if self.winner:
+                print(f"Player {self.winner} wins!")
+            else:
+                print("Draw!")
 
     def run_debug(self):
         self.board.clear_board()
@@ -133,7 +136,10 @@ class GomokuGame:
                         print("Invalid move. Try again.")
                     elif self.game_over:
                         self.print_board()
-                        self.winner if print(f"Player {self.winner} wins!") else print("Draw!")    
+                        if self.winner:
+                            print(f"Player {self.winner} wins!")
+                        else:
+                            print("Draw!")
                         break
                 except ValueError:
                     print("Invalid input! Please enter two integers separated by a space.")
@@ -145,5 +151,8 @@ class GomokuGame:
                     continue
                 elif self.game_over:
                     self.print_board()
-                    self.winner if print(f"Player {self.winner} wins!") else print("Draw!")  
+                    if self.winner:
+                        print(f"Player {self.winner} wins!")
+                    else:
+                        print("Draw!")
                     break
