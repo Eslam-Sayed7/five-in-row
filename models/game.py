@@ -1,6 +1,7 @@
 import random
 import pygame
 from controllers.minmax import minmax
+from controllers.alpha_beta import alpha_beta
 from models.utils import check_game_status
 class GomokuGame:
     def __init__(self, board):
@@ -75,8 +76,9 @@ class GomokuGame:
 
     def ai_move(self):
         valid_moves = self.get_valid_moves()
-        best_move = minmax(self.board, valid_moves, self.current_player)
-        return best_move  
+        best_move = alpha_beta(self.board, valid_moves, self.current_player)
+        # best_move = minmax(self.board, valid_moves, self.current_player)
+        return best_move
     
     def run(self, events,board,width,height): # for the actual game
         if self.game_over:
