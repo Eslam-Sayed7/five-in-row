@@ -14,7 +14,7 @@ class PlayState(GameState):
         self.valid_moves = None
         self.game_mode = engine.game_mode
         self.last_ai_move_time = 0
-        self.ai_move_delay = 3000 
+        self.ai_move_delay = 3000
         self.winner = None
     def create_overlay_surfaces(self):
         self.board_surface = pygame.Surface((self.engine.width, self.engine.height), pygame.SRCALPHA)
@@ -44,6 +44,8 @@ class PlayState(GameState):
         self.process_game_logic(events)
         
     def process_game_logic(self, events):
+        if not self.engine.game_logic.game_over:
+            self.winner = None
         # For human vs AI mode
         if not self.game_mode:
             self.engine.game_logic.run(events, self.engine.gomoku_board, 

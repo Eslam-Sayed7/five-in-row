@@ -300,15 +300,16 @@ class GomokuBoard:
 
         surface.blit(self.p1_indicator, (50, (surface.get_height()//2-150)))
         surface.blit(self.p2_indicator, (surface.get_width()-200, (surface.get_height()//2-150)))
+        
         if winner == 1:
             self.winner_surface = self.font.render("Player 1 Wins!", True, (0, 0, 0))
-            surface.blit(self.winner_surface, (surface.get_width()//2 - 50, surface.get_height()-50))
+            surface.blit(self.winner_surface, (surface.get_width()//2 - 50, surface.get_height()-20))
         elif winner == 2:
             self.winner_surface = self.font.render("Player 2 Wins!", True, (0, 0, 0))
-            surface.blit(self.winner_surface, (surface.get_width()//2 - 50, surface.get_height()-50))
+            surface.blit(self.winner_surface, (surface.get_width()//2 - 50, surface.get_height()-20))
         elif winner == "Draw":
             self.winner_surface = self.font.render("Draw!", True, (0, 0, 0))
-            surface.blit(self.winner_surface, (surface.get_width()//2 - 25, surface.get_height()-50))
+            surface.blit(self.winner_surface, (surface.get_width()//2 - 25, surface.get_height()-20))
     def is_hovering_cell(self, mouse_pos, row, col, offset_x, offset_y, cell_size, radius):
         mouse_x, mouse_y = mouse_pos
         x = offset_x + col * cell_size
