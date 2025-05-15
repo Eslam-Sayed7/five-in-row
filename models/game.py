@@ -83,14 +83,20 @@ class GomokuGame:
         print("\n")
 
     def ai_move(self, op):
+        # If game is already over, don't attempt to make a move
+        if self.game_over:
+            return None
+            
         valid_moves = self.get_valid_moves()
         if not valid_moves:
-            return None, None
+            return None
             
         if (op == "MinMax"):
             best_move = minmax(self.board, valid_moves, self.current_player)
         elif (op == "AlphaBeta"):
             best_move = alpha_beta(self.board, valid_moves, self.current_player)
+            # best_move = minmax(self.board, valid_moves, self.current_player)
+
         return best_move
     
     def run(self, events, board, width, height):
@@ -119,7 +125,11 @@ class GomokuGame:
                                 break
             else:  # AI's turn
                 print(f"Player 2's turn (AI)")
-                row, col = self.ai_move("AlphaBeta")
+                move = self.ai_move("AlphaBeta")
+                if move is None:
+                    return
+                    
+                row, col = move
                 if row is not None and col is not None:
                     print(f"AI chose: {row} {col}")
                     if not self.place_stone(row, col):
@@ -161,7 +171,11 @@ class GomokuGame:
                     print("Invalid input! Please enter two integers separated by a space.")
             else:
                 print(f"Player {self.get_current_player()}'s turn (AI)!")
-                row, col = self.ai_move("AlphaBeta")
+                move = self.ai_move("AlphaBeta")
+                if move is None:
+                    continue
+                    
+                row, col = move
                 if row is not None and col is not None:
                     print(f"AI chose: {row} {col}")
                     if not self.place_stone(row, col):

@@ -46,6 +46,7 @@ class MenuState(GameState):
                     if button.is_hovered(mouse_pos, 0) and button.state == self.menu_state:
                         if button.text == "Start Game":
                             self.engine.change_state(self.engine.play_state)
+                            self.engine.game_logic.reset()
                         elif button.text == "Settings":
                             self.menu_state = "Nested"
                         elif button.text == "Back":

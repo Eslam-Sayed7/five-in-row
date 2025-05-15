@@ -1,3 +1,4 @@
+
 import pygame
 from controllers.TransitionManager import TransitionManager
 from controllers.GameStates.GameState import GameState
@@ -14,9 +15,7 @@ class PlayState(GameState):
         self.game_mode = engine.game_mode
         self.last_ai_move_time = 0
         self.ai_move_delay = 3000 
-        self.P1_name = "Player"
-        self.P2_name = "Alpha-Beta AI"
-
+        self.winner = None
     def create_overlay_surfaces(self):
         self.board_surface = pygame.Surface((self.engine.width, self.engine.height), pygame.SRCALPHA)
         
@@ -29,7 +28,8 @@ class PlayState(GameState):
         self.engine.room_renderer.set_camera_mode("game")
         self.game_mode = self.engine.game_mode
         print("Entering play state, board cleared")
-        
+        self.engine.game_logic.reset()
+        self.winner = None
         self.engine.game_logic.change_mode(self.game_mode)
         self.in_3d_mode = True
         self.last_ai_move_time = pygame.time.get_ticks()
@@ -49,9 +49,21 @@ class PlayState(GameState):
             self.engine.game_logic.run(events, self.engine.gomoku_board, 
                                       self.engine.width, self.engine.height)
             self.turn = self.engine.game_logic.get_current_player()
+            self.winner = self.engine.game_logic.winner
 
         # For AI vs AI mode
         else:
+            if self.engine.game_logic.game_over:
+                if self.engine.game_logic.winner:
+                    winner_name = "MinMax AI" if self.engine.game_logic.winner == 1 else "Alpha-Beta AI"
+                    print(f"{winner_name} wins!")
+                    self.winner = self.engine.game_logic.winner
+                else:
+                    print("Draw!")
+                    self.winner = "Draw"
+                return
+                
+                
             current_time = pygame.time.get_ticks()
             if current_time - self.last_ai_move_time > self.ai_move_delay:
                 self.last_ai_move_time = current_time
@@ -59,24 +71,35 @@ class PlayState(GameState):
                 current_player = self.engine.game_logic.get_current_player()
                 if current_player == 1:
                     algorithm = "MinMax"
+                    ai_name = "MinMax AI"
                 else:
                     algorithm = "AlphaBeta"
+                    ai_name = "Alpha-Beta AI"
                 
                 print(f"AI ({algorithm}) Turn: ")
-                row, col = self.engine.game_logic.ai_move(algorithm)
+                result = self.engine.game_logic.ai_move(algorithm)
+                
+                if result is None or isinstance(result, int):
+                    print(f"Error: AI move returned invalid result: {result}")
+                    return
+                    
+                row, col = result
                 print(f"AI ({algorithm}) chose: {row} {col}")
                 
                 if self.engine.game_logic.place_stone(row, col):
-                    print(f"AI placed a stone at ({row}, {col})")
+                    print(f"{ai_name} placed a stone at ({row}, {col})")
                     
                 self.turn = self.engine.game_logic.get_current_player()
                 self.valid_moves = self.engine.game_logic.get_valid_moves()
                 
                 if self.engine.game_logic.game_over:
                     if self.engine.game_logic.winner:
-                        print(f"Player {self.engine.game_logic.winner} wins!")
+                        winner_name = "MinMax AI" if self.engine.game_logic.winner == 1 else "Alpha-Beta AI"
+                        print(f"{winner_name} wins!")
+                        self.winner = self.engine.game_logic.winner
                     else:
                         print("Draw!")
+                        self.winner = "Draw"
 
     def update(self, dt):
         self.transition.update(on_midpoint=lambda: self.switch_to_2d_mode())
@@ -100,7 +123,7 @@ class PlayState(GameState):
             glPushMatrix()
             glLoadIdentity()
             
-            self.engine.room_renderer.gomoku_board.draw_2D(self.board_surface, self.turn, self.valid_moves,self.P1_name,self.P2_name)
+            self.engine.room_renderer.gomoku_board.draw_2D(self.board_surface, self.turn, self.valid_moves,self.winner)
             board_texture = pygame.image.tostring(self.board_surface, "RGBA", True)
             
             glEnable(GL_BLEND)
@@ -112,6 +135,5 @@ class PlayState(GameState):
             glMatrixMode(GL_MODELVIEW)
             glPopMatrix()
         
-        # Render transition effects if active
         if self.transition:
             self.transition.render()

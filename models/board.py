@@ -35,7 +35,7 @@ class GomokuBoard:
 
         self.p1_indicator = pygame.image.load('assets/textures/indicator_p1.png')
         self.p2_indicator = pygame.image.load('assets/textures/indicator_p2.png')
-
+        self.winner_surface = None
     def clear_board(self):
         self.board_state = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
 
@@ -167,7 +167,7 @@ class GomokuBoard:
             return True
         return False
 
-    def draw_2D(self, surface, turn, valid_moves,P1_name,P2_name):
+    def draw_2D(self, surface, turn, valid_moves,winner):
         background_image = self.background_image_raw.convert()
         background_scaled = pygame.transform.scale(background_image, surface.get_size())
         surface.fill((199, 164, 118))
@@ -300,11 +300,17 @@ class GomokuBoard:
 
         surface.blit(self.p1_indicator, (50, (surface.get_height()//2-150)))
         surface.blit(self.p2_indicator, (surface.get_width()-200, (surface.get_height()//2-150)))
-
+        if winner == 1:
+            self.winner_surface = self.font.render("Player 1 Wins!", True, (0, 0, 0))
+            surface.blit(self.winner_surface, (surface.get_width()//2 - 50, surface.get_height()-50))
+        elif winner == 2:
+            self.winner_surface = self.font.render("Player 2 Wins!", True, (0, 0, 0))
+            surface.blit(self.winner_surface, (surface.get_width()//2 - 50, surface.get_height()-50))
+        elif winner == "Draw":
+            self.winner_surface = self.font.render("Draw!", True, (0, 0, 0))
+            surface.blit(self.winner_surface, (surface.get_width()//2 - 25, surface.get_height()-50))
     def is_hovering_cell(self, mouse_pos, row, col, offset_x, offset_y, cell_size, radius):
         mouse_x, mouse_y = mouse_pos
         x = offset_x + col * cell_size
         y = offset_y + row * cell_size
         return (x - radius < mouse_x < x + radius) and (y - radius < mouse_y < y + radius)
-
-    
