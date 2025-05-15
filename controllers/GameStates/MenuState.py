@@ -58,6 +58,9 @@ class MenuState(GameState):
                             self.engine.room_renderer.gomoku_board.set_board_size(self.board_size)
                         elif isinstance(button, ToggleButton):
                             button.update_value()
+                            print("ToggleButton new value:", button.value)
+                            self.engine.game_mode = button.value
+                            self.engine.game_logic.change_mode(button.value)
                         break
     
     def on_enter(self):

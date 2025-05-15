@@ -35,12 +35,11 @@ class GameEngine:
             glClearColor(0.1, 0.1, 0.1, 1.0)
             glEnable(GL_DEPTH_TEST)
             self.room_renderer = RoomRenderer(self.gomoku_board)
-
+            self.game_mode = False
             self.menu_state = MenuState(self)
             self.play_state = PlayState(self)
             self.current_state = self.menu_state
             self.resize(width, height)
-
 
 
     def change_state(self, new_state):

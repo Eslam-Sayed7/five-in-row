@@ -3,12 +3,16 @@ import pygame
 from controllers.minmax import minmax
 from controllers.alpha_beta import alpha_beta
 from models.utils import check_game_status
+import time
+
 class GomokuGame:
     def __init__(self, board):
         self.board = board
         self.current_player = 1
         self.winner = None
         self.game_over = False
+        self.game_mode = False  # False = Player vs AI, True = AI vs AI
+        self.last_ai_move_time = 0
 
     def reset(self):
         self.current_player = 1
@@ -54,6 +58,10 @@ class GomokuGame:
 
     def get_current_player(self):
         return self.current_player
+        
+    def change_mode(self, mode):
+        self.game_mode = mode
+        print(f"Game mode changed to {'AI vs AI' if mode else 'Player vs AI'}")
 
     def print_board(self):
         symbols = {
@@ -74,13 +82,18 @@ class GomokuGame:
             print()
         print("\n")
 
-    def ai_move(self):
+    def ai_move(self, op):
         valid_moves = self.get_valid_moves()
-        best_move = alpha_beta(self.board, valid_moves, self.current_player)
-        # best_move = minmax(self.board, valid_moves, self.current_player)
+        if not valid_moves:
+            return None, None
+            
+        if (op == "MinMax"):
+            best_move = minmax(self.board, valid_moves, self.current_player)
+        elif (op == "AlphaBeta"):
+            best_move = alpha_beta(self.board, valid_moves, self.current_player)
         return best_move
     
-    def run(self, events,board,width,height): # for the actual game
+    def run(self, events, board, width, height):
         if self.game_over:
             return
 
@@ -89,28 +102,31 @@ class GomokuGame:
         offset_x = board.offset_x
         offset_y = board.offset_y
         hint_radius = cell_size // 3
-
-        if self.current_player == 1:
-            for event in events:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    for row, col in self.get_valid_moves():
-                        if board.is_hovering_cell(mouse_pos, row, col, offset_x, offset_y, cell_size, hint_radius):
-                            if not self.place_stone(row, col):
-                                print("Invalid move. Try again.")
-                                return
-                            print(f"Player 1 placed a stone at ({row}, {col})")
-                            self.turn = 2
-                            break
-        else:
-            print(f"Player 2's turn (AI)")
-            row, col = self.ai_move()
-            print(f"AI chose: {row} {col}")
-            if not self.place_stone(row, col):
-                return
-            print(f"AI placed a stone at ({row}, {col})")
-            self.turn = 1
-            self.valid_moves = self.get_valid_moves()
+        
+        # Player vs AI mode
+        if self.game_mode == False:
+            if self.current_player == 1:  # Human player's turn
+                for event in events:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = pygame.mouse.get_pos()
+                        valid_moves = self.get_valid_moves()
+                        for row, col in valid_moves:
+                            if board.is_hovering_cell(mouse_pos, row, col, offset_x, offset_y, cell_size, hint_radius):
+                                if not self.place_stone(row, col):
+                                    print("Invalid move. Try again.")
+                                    return
+                                print(f"Player 1 placed a stone at ({row}, {col})")
+                                break
+            else:  # AI's turn
+                print(f"Player 2's turn (AI)")
+                row, col = self.ai_move("AlphaBeta")
+                if row is not None and col is not None:
+                    print(f"AI chose: {row} {col}")
+                    if not self.place_stone(row, col):
+                        return
+                    print(f"AI placed a stone at ({row}, {col})")
+        
+        # AI vs AI is handled in PlayState
 
         if self.game_over:
             if self.winner:
@@ -145,14 +161,15 @@ class GomokuGame:
                     print("Invalid input! Please enter two integers separated by a space.")
             else:
                 print(f"Player {self.get_current_player()}'s turn (AI)!")
-                row, col = self.ai_move()
-                print(f"AI chose: {row} {col}")
-                if not self.place_stone(row, col):
-                    continue
-                elif self.game_over:
-                    self.print_board()
-                    if self.winner:
-                        print(f"Player {self.winner} wins!")
-                    else:
-                        print("Draw!")
-                    break
+                row, col = self.ai_move("AlphaBeta")
+                if row is not None and col is not None:
+                    print(f"AI chose: {row} {col}")
+                    if not self.place_stone(row, col):
+                        continue
+                    elif self.game_over:
+                        self.print_board()
+                        if self.winner:
+                            print(f"Player {self.winner} wins!")
+                        else:
+                            print("Draw!")
+                        break

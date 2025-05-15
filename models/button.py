@@ -58,9 +58,9 @@ class ToggleButton(Button):
         button_rect = pygame.Rect(self.position[0], self.position[1], self.width, self.height)
         current_text_color = (155, 155, 155) if self.hover else self.text_color
         if (self.value == True):
-            self.text = "AI vs AI"
+            self.text = "AI vs AI" # 1
         else:
-            self.text = "Player vs AI"
+            self.text = "Player vs AI" # 0
 
         text_surface = self.font.render(f"Mode: {self.text}" , True, current_text_color)
         text_rect = text_surface.get_rect(midleft=(button_rect.left + 10, button_rect.centery))

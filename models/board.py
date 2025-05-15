@@ -31,7 +31,10 @@ class GomokuBoard:
         self.cell_texture = pygame.transform.scale(self.cell_texture, (self.cell_size, self.cell_size))
 
         self.font = pygame.font.Font('assets/SupremeSpike-KVO8D.otf', 16)
-        self.buttons = [Button("[ESC] Main Menu - note to developers, the UI not done yet, its just working for now",(20,20),self.font,50,20,text_color=(0,0,0),hover_color=(0,0,0))]
+        self.buttons = [Button("[ESC] Main Menu",(20,20),self.font,50,20,text_color=(0,0,0),hover_color=(0,0,0))]
+
+        self.p1_indicator = pygame.image.load('assets/textures/indicator_p1.png')
+        self.p2_indicator = pygame.image.load('assets/textures/indicator_p2.png')
 
     def clear_board(self):
         self.board_state = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
@@ -164,7 +167,7 @@ class GomokuBoard:
             return True
         return False
 
-    def draw_2D(self, surface, turn, valid_moves):
+    def draw_2D(self, surface, turn, valid_moves,P1_name,P2_name):
         background_image = self.background_image_raw.convert()
         background_scaled = pygame.transform.scale(background_image, surface.get_size())
         surface.fill((199, 164, 118))
@@ -273,6 +276,8 @@ class GomokuBoard:
 
                     piece_color = (0, 0, 0) if self.board_state[row][col] == 1 else (255, 255, 255)
                     pygame.draw.circle(surface, piece_color, (center_x, center_y), cell_size // 3)
+                    self.p1_indicator.set_alpha(20)
+
 
         surface.blit(circle_surface, (x - cell_size // 2, y - cell_size // 2))
 
@@ -280,9 +285,26 @@ class GomokuBoard:
         for button in self.buttons:
             button.hover = button.is_hovered(mouse_pos, 20)
             button.draw(surface)
+        self.p1_indicator = pygame.transform.scale(self.p1_indicator, (150, 150)).convert_alpha()
+        surface.blit(self.p1_indicator, (50, (surface.get_height()//2-150)))
+
+        self.p2_indicator = pygame.transform.scale(self.p2_indicator, (150, 150)).convert_alpha()
+        surface.blit(self.p2_indicator, (surface.get_width()-200, (surface.get_height()//2-150)))
+        self.p1_indicator = pygame.transform.scale(self.p1_indicator, (150, 150)).convert_alpha()
+        self.p2_indicator = pygame.transform.scale(self.p2_indicator, (150, 150)).convert_alpha()
+        if (turn == 1):
+            self.p1_indicator.set_alpha(255)
+            self.p2_indicator.set_alpha(20)
+        elif (turn == 2):
+            self.p2_indicator.set_alpha(255)
+
+        surface.blit(self.p1_indicator, (50, (surface.get_height()//2-150)))
+        surface.blit(self.p2_indicator, (surface.get_width()-200, (surface.get_height()//2-150)))
 
     def is_hovering_cell(self, mouse_pos, row, col, offset_x, offset_y, cell_size, radius):
         mouse_x, mouse_y = mouse_pos
         x = offset_x + col * cell_size
         y = offset_y + row * cell_size
         return (x - radius < mouse_x < x + radius) and (y - radius < mouse_y < y + radius)
+
+    
